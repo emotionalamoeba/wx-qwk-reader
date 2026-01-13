@@ -1,3 +1,12 @@
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+WXQWKReader
+*.qwk
+CMakeFiles
+.vscode
+
+
 # Prerequisites
 *.d
 
