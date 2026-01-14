@@ -49,9 +49,7 @@ int QWK::readControlFile(zip *archive)
     }
 
     for (unsigned int line_index = 11; line_index < lines.size() - 3; line_index += 2)
-    {
-      std::cout << "ID " << lines[line_index] << " title " << lines[line_index + 1] << std::endl;
-
+    {      
       Conference* conference = new Conference();
       conference->id = atoi(lines[line_index].c_str());
       conference->title = lines[line_index + 1];
@@ -69,10 +67,7 @@ void QWK::readMessagesFile(zip *archive)
   {
     char buffer[128];
     zip_fread(file, buffer, sizeof(buffer));
-    process_file_header_chunk();
-    // Process message information
-
-    std::cout << "Messages" << std::endl;
+    process_file_header_chunk();     
 
     while (zip_fread(file, buffer, sizeof(buffer)) > 0)
     {
@@ -121,8 +116,5 @@ Message *QWK::process_message_header_chunk(const char *chunk)
   message->conference = (chunk[123] << 8) | chunk[124];
   message->text = new char[(message->chunk_count - 1) * 128]{};
 
-  // std::cout
-  //     << "Message number " << message->message_no << " subject "
-  //     << message->subject << std::endl;
   return message;
 }

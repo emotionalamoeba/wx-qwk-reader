@@ -10,6 +10,8 @@ public:
     void setConferences(std::list<Conference *> conferences);
 
 private:
+    void OnClick( wxListEvent& event );
+
     wxListCtrl *list_ctrl;
     char *filename;
 };
