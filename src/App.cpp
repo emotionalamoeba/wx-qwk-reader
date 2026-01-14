@@ -67,6 +67,7 @@ private:
     {
       wxString fileName = openFileDialog->GetPath();
       qwk = new QWK(fileName.mb_str());
+      conference_list->setConferences(qwk->getConferenceList());
     }
   }
 

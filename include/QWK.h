@@ -22,7 +22,7 @@ struct Message
 struct Conference
 {
   unsigned int id;
-  std::string *title;
+  std::string title;
   unsigned int message_count;
   unsigned int unread_message_count;
 };

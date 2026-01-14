@@ -52,10 +52,10 @@ int QWK::readControlFile(zip *archive)
     {
       std::cout << "ID " << lines[line_index] << " title " << lines[line_index + 1] << std::endl;
 
-      Conference conference;
-      conference.id = atoi(lines[line_index].c_str());
-      conference.title = &lines[line_index + 1];
-      conference_list.push_back(&conference);
+      Conference* conference = new Conference();
+      conference->id = atoi(lines[line_index].c_str());
+      conference->title = lines[line_index + 1];
+      conference_list.push_back(conference);
     }
   }
 
