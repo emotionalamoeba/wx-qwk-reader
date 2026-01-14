@@ -7,8 +7,9 @@ class ConferenceList : public wxFrame
 public:
     ConferenceList(wxWindow *parent, wxString title);
 
-    void set_conferences();
+    void setConferences(char *filename, std::list<Conference *> conferences);
 
 private:
     wxListCtrl *list_ctrl;
+    char *filename;
 };
