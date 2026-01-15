@@ -26,6 +26,20 @@ public:
   }
 
 private:
+  void OnConferenceSelected( wxListEvent& event )
+{
+    int item_index = event.GetIndex();
+    if (item_index != -1) {
+        wxString item_text = conference_list->GetConferenceIdFromListId(item_index);        
+        std::cout << item_text << std::endl;
+        messageTree->populate_tree_for_conference(qwk, atoi(item_text));
+        
+        return;
+    }
+
+    std::cout << "Could not select a conference" << std::endl;
+}
+
   void doLayout()
   {
 
@@ -47,13 +61,14 @@ private:
     // Split the window vertically and set the left and right panes
     splitter->SplitVertically(left_panel, right_panel);
 
-    MessageTree *tree =
+    messageTree =
         new MessageTree(left_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                         wxTL_MULTIPLE | wxBORDER_THEME);
 
-    left_sizer->Add(tree, 1, wxEXPAND | wxALL, 5);
+    left_sizer->Add(messageTree, 1, wxEXPAND | wxALL, 5);
 
     conference_list = new ConferenceList(this, "Conference List");
+    conference_list->Bind(wxEVT_LIST_ITEM_SELECTED, &Frame1::OnConferenceSelected, this);
     conference_list->Show();
   }
 
@@ -102,6 +117,7 @@ private:
   QWK *qwk;
   wxMenuBar *mainMenu = new wxMenuBar;
   ConferenceList *conference_list;
+  MessageTree *messageTree;
 };
 
 class Application : public wxApp

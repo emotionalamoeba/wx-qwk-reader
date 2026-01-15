@@ -8,6 +8,7 @@ public:
     ConferenceList(wxWindow *parent, wxString title);
 
     void setConferences(std::list<Conference *> conferences);
+    wxString GetConferenceIdFromListId(unsigned int item_index);
 
 private:
     void OnClick( wxListEvent& event );

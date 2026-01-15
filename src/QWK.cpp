@@ -74,7 +74,7 @@ void QWK::readMessagesFile(zip *archive)
       Message *message = process_message_header_chunk(buffer);
       zip_fread(file, message->text, (message->chunk_count - 1) * 128);
 
-      message_map[message->message_no].push_back(message);
+      message_map[message->message_no] = message;
       conference_message_map[message->conference].push_back(message->message_no);
     }
     zip_fclose(file);

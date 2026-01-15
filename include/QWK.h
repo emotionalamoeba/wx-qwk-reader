@@ -31,7 +31,9 @@ class QWK
 {
 public:
   QWK(const char *filename);
-  const std::unordered_map<unsigned int, std::list<Message *>> &getMessageMap() const { return message_map; };
+  const std::unordered_map<unsigned int, Message *> &getMessageMap() const { return message_map; };
+  const std::unordered_map<unsigned int, std::list<unsigned int>> &getConferenceMessageMap() const { return conference_message_map; };
+  
   const std::list<Conference *> &getConferenceList() const { return conference_list; };
 
 private:
@@ -47,5 +49,5 @@ private:
 
   std::list<Conference *> conference_list = {};
   std::unordered_map<unsigned int, std::list<unsigned int>> conference_message_map = {};
-  std::unordered_map<unsigned int, std::list<Message *>> message_map = {};
+  std::unordered_map<unsigned int, Message *> message_map = {};
 };

@@ -39,23 +39,29 @@ void MessageTree::populate_tree_for_conference(QWK *qwk, unsigned int conference
   DeleteAllItems();
 
   // Get the root messages for the conference
-  const auto &message_map = qwk->getMessageMap();
-  auto conference_messages_it = message_map.find(conference_id);
-  if (conference_messages_it == message_map.end())
+  const auto &conference_message_map = qwk->getConferenceMessageMap();
+  auto conference_messages_it = conference_message_map.find(conference_id);
+  if (conference_messages_it == conference_message_map.end())
   {
+    std::cerr << "Conference not found " << std::endl;
     return;
   }
 
   const auto &conference_messages = conference_messages_it->second;
   if (conference_messages.empty())
   {
+    std::cerr << "Conference has no messages" << std::endl;
     return;
   }
 
+  const auto &message_map = qwk->getMessageMap();
   // Build parent-child relationships
   for (auto it = conference_messages.begin(); it != conference_messages.end(); ++it)
   {
-    Message *message = *it;
+    unsigned int message_no = *it;
+    auto message_it = message_map.find(message_no);
+    Message* message = message_it;
+
     unsigned int parent_id = message->in_reply_to;
     if (parent_id != 0) // Only process messages that have a parent (reply)
     {

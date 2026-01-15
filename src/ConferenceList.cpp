@@ -18,9 +18,7 @@ ConferenceList::ConferenceList(wxWindow *parent, wxString title) : wxFrame(paren
 
     wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
     vbox->Add(list_ctrl, wxID_ANY, wxEXPAND | wxALL, 20);
-    panel->SetSizer(vbox);
-
-    list_ctrl->Bind(wxEVT_LIST_ITEM_SELECTED, &ConferenceList::OnClick, this);
+    panel->SetSizer(vbox);    
 }
 
 // May need to convert all ints to strings
@@ -38,15 +36,6 @@ void ConferenceList::setConferences(std::list<Conference *> conferences)
     }
 }
 
-void ConferenceList::OnClick( wxListEvent& event )
-{
-    int item_index = event.GetIndex();
-    if (item_index != -1) {
-        wxString item_text = list_ctrl->GetItemText(item_index);
-
-        std::cout << item_text << std::endl;
-        return;
-    }
-
-    std::cout << "Could not select a conference" << std::endl;
+wxString ConferenceList::GetConferenceIdFromListId(unsigned int item_index) {
+    return list_ctrl->GetItemText(item_index);
 }
