@@ -55,6 +55,7 @@ jobs:
         sudo apt-get install -y libwxgtk3.2-dev
         # Or for wxWidgets 3.0:
         # sudo apt-get install -y libwxgtk3.0-gtk3-dev
+        sudo apt-get install -y libzip-dev
         
     - name: Install wxWidgets (Windows)
       if: runner.os == 'Windows'
@@ -63,12 +64,14 @@ jobs:
         git clone https://github.com/Microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
         .\vcpkg\vcpkg install wxwidgets:x64-windows
+        .\vcpkg\vcpkg install libzip:x64-windows
         
     - name: Install wxWidgets (macOS)
       if: runner.os == 'macOS'
       run: |
         brew update
         brew install wxwidgets
+        brew install libzip
         # For specific version:
         # brew install wxwidgets@3.2
 
