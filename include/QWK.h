@@ -15,7 +15,7 @@ struct Message {
   char *date_str;
   unsigned int conference;
   unsigned int chunk_count;
-  char *text;
+  char* text;
 };
 
 struct Conference {

@@ -64,10 +64,29 @@ void QWK::readMessagesFile(zip *archive) {
     while (zip_fread(file, buffer, sizeof(buffer)) > 0) {
       Message *message = process_message_header_chunk(buffer);
       unsigned int text_length = (message->chunk_count - 1) * 128;
-      zip_fread(file, message->text, text_length);
 
-      // Null-terminate the string
-      // message->text[text_length - 1] = 0;
+      char* text = new char[text_length + 1]{};
+      zip_fread(file, text, text_length);
+
+      for (int c = 0; c < text_length; c++) {
+        if ((uint8_t)(text[c]) == 0xE3) {
+          text[c] = 10;
+        }
+
+        // Turn control characters into space
+        if ((uint8_t)(text[c])>=1 && (uint8_t)(text[c])<32 && ((uint8_t)(text[c]) != 10)) {
+          text[c] = 32;
+        }
+
+        // Codes above the printable characters become a space
+        if ((uint8_t)(text[c]) > 127) {
+          text[c] = 32;
+        }
+      }
+
+      text[text_length] = 0;
+
+      message->text = text;
 
       message_map[message->message_no] = message;
       conference_message_map[message->conference].push_back(message->message_no);
@@ -106,7 +125,6 @@ Message *QWK::process_message_header_chunk(const char *chunk) {
   uint8_t msb = (uint8_t)chunk[124];
 
   message->conference = lsb | (msb << 8);
-  message->text = new char[(message->chunk_count - 1) * 128]{};
 
   return message;
 }

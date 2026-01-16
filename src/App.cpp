@@ -20,6 +20,12 @@ public:
   }
 
 private:
+  QWK *qwk;
+  wxMenuBar *mainMenu = new wxMenuBar;
+  ConferenceList *conference_list;
+  MessageTree *messageTree;
+  wxTextCtrl *messageText;
+  
   void OnConferenceSelected(wxListEvent &event) {
     int item_index = event.GetIndex();
     if (item_index != -1) {
@@ -35,7 +41,8 @@ private:
   void OnMessageSelected(wxTreeListEvent &event) {
     unsigned int selectedMessageId = std::atoi(messageTree->GetItemText(event.GetItem()));
     Message *selectedMessage = qwk->getMessageById(selectedMessageId);
-    messageText->ChangeValue(wxString::FromUTF8(selectedMessage->text));
+    messageText->SetValue(selectedMessage->text);
+    messageText->Update();
   }
 
   void doLayout() {
@@ -52,9 +59,8 @@ private:
     wxPanel *right_panel = new wxPanel(splitter, wxID_ANY);
 
     wxBoxSizer *right_sizer = new wxBoxSizer(wxVERTICAL);
-    wxFont font = wxFont(9, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    messageText = new wxTextCtrl(right_panel, wxTE_MULTILINE);
-    messageText->SetFont(font);
+    messageText = new wxTextCtrl(right_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_MULTILINE );
+    messageText->SetFont(wxFont(9, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
     right_sizer->Add(messageText, 1, wxEXPAND | wxALL, 5);
 
     // panel1Sizer->Add(textCtrl1, 1, wxEXPAND);
@@ -107,12 +113,6 @@ private:
 
     Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame1::OnQuit));
   }
-
-  QWK *qwk;
-  wxMenuBar *mainMenu = new wxMenuBar;
-  ConferenceList *conference_list;
-  MessageTree *messageTree;
-  wxTextCtrl *messageText;
 };
 
 class Application : public wxApp {
