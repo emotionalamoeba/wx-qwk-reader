@@ -55,7 +55,7 @@ jobs:
         sudo apt-get install -y libwxgtk3.2-dev
         # Or for wxWidgets 3.0:
         # sudo apt-get install -y libwxgtk3.0-gtk3-dev
-        sudo apt-get install -y libzip-dev zipcmp zipmerge
+        sudo apt-get install -y libzip-dev zipcmp zipmerge ziptool
         
     - name: Install wxWidgets (Windows)
       if: runner.os == 'Windows'
