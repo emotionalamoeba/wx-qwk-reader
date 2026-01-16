@@ -24,13 +24,18 @@ private:
     int item_index = event.GetIndex();
     if (item_index != -1) {
       wxString item_text = conference_list->GetConferenceIdFromListId(item_index);
-      std::cout << item_text << std::endl;
       messageTree->populate_tree_for_conference(qwk, atoi(item_text));
 
       return;
     }
 
     std::cout << "Could not select a conference" << std::endl;
+  }
+
+  void OnMessageSelected(wxTreeListEvent &event) {
+    unsigned int selectedMessageId = std::atoi(messageTree->GetItemText(event.GetItem()));
+    Message *selectedMessage = qwk->getMessageById(selectedMessageId);
+    messageText->ChangeValue(wxString::FromUTF8(selectedMessage->text));
   }
 
   void doLayout() {
@@ -45,7 +50,13 @@ private:
     left_panel->SetSizer(left_sizer);
 
     wxPanel *right_panel = new wxPanel(splitter, wxID_ANY);
+
     wxBoxSizer *right_sizer = new wxBoxSizer(wxVERTICAL);
+    wxFont font = wxFont(9, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    messageText = new wxTextCtrl(right_panel, wxTE_MULTILINE);
+    messageText->SetFont(font);
+    right_sizer->Add(messageText, 1, wxEXPAND | wxALL, 5);
+
     // panel1Sizer->Add(textCtrl1, 1, wxEXPAND);
     right_panel->SetSizer(right_sizer);
 
@@ -54,6 +65,7 @@ private:
 
     messageTree =
         new MessageTree(left_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_MULTIPLE | wxBORDER_THEME);
+    messageTree->Bind(wxEVT_TREELIST_SELECTION_CHANGED, &Frame1::OnMessageSelected, this);
 
     left_sizer->Add(messageTree, 1, wxEXPAND | wxALL, 5);
 
@@ -100,6 +112,7 @@ private:
   wxMenuBar *mainMenu = new wxMenuBar;
   ConferenceList *conference_list;
   MessageTree *messageTree;
+  wxTextCtrl *messageText;
 };
 
 class Application : public wxApp {

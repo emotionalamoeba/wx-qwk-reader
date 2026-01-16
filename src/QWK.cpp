@@ -63,7 +63,11 @@ void QWK::readMessagesFile(zip *archive) {
 
     while (zip_fread(file, buffer, sizeof(buffer)) > 0) {
       Message *message = process_message_header_chunk(buffer);
-      zip_fread(file, message->text, (message->chunk_count - 1) * 128);
+      unsigned int text_length = (message->chunk_count - 1) * 128;
+      zip_fread(file, message->text, text_length);
+
+      // Null-terminate the string
+      // message->text[text_length - 1] = 0;
 
       message_map[message->message_no] = message;
       conference_message_map[message->conference].push_back(message->message_no);
@@ -106,3 +110,5 @@ Message *QWK::process_message_header_chunk(const char *chunk) {
 
   return message;
 }
+
+Message *QWK::getMessageById(unsigned int id) { return message_map[id]; }
