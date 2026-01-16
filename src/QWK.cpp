@@ -1,19 +1,17 @@
 #include "QWK.h"
 
-#include <iostream>
-#include <zip.h>
-#include <fstream>
+#include <cstdint>
 #include <cstring>
-#include <vector>
+#include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
+#include <zip.h>
 
-QWK::QWK(const char *filename)
-{
+QWK::QWK(const char *filename) {
   zip *archive = zip_open(filename, 0, NULL);
 
-  if (!archive)
-  {
+  if (!archive) {
     std::cerr << "Failed to open the zip file." << std::endl;
   }
 
@@ -23,8 +21,7 @@ QWK::QWK(const char *filename)
   constructConferenceList();
 }
 
-int QWK::readControlFile(zip *archive)
-{
+int QWK::readControlFile(zip *archive) {
   unsigned int MAX_LINE_LENGTH = 255;
 
   zip_stat_t status;
@@ -34,8 +31,7 @@ int QWK::readControlFile(zip *archive)
   // Read into vector<char> (byte buffer)
   std::vector<char> buffer(size);
   zip_file *file = zip_fopen(archive, "CONTROL.DAT", 0);
-  if (file && zip_fread(file, buffer.data(), size))
-  {
+  if (file && zip_fread(file, buffer.data(), size)) {
     // Create stringstream from buffer
     std::stringstream ss(std::string(buffer.begin(), buffer.end()));
 
@@ -43,14 +39,12 @@ int QWK::readControlFile(zip *archive)
     std::string line;
     std::vector<std::string> lines;
 
-    while (std::getline(ss, line))
-    {
+    while (std::getline(ss, line)) {
       lines.push_back(line);
     }
 
-    for (unsigned int line_index = 11; line_index < lines.size() - 3; line_index += 2)
-    {      
-      Conference* conference = new Conference();
+    for (unsigned int line_index = 11; line_index < lines.size() - 3; line_index += 2) {
+      Conference *conference = new Conference();
       conference->id = atoi(lines[line_index].c_str());
       conference->title = lines[line_index + 1];
       conference_list.push_back(conference);
@@ -60,17 +54,14 @@ int QWK::readControlFile(zip *archive)
   return 0;
 }
 
-void QWK::readMessagesFile(zip *archive)
-{
+void QWK::readMessagesFile(zip *archive) {
   zip_file *file = zip_fopen(archive, "MESSAGES.DAT", 0);
-  if (file)
-  {
+  if (file) {
     char buffer[128];
     zip_fread(file, buffer, sizeof(buffer));
-    process_file_header_chunk();     
+    process_file_header_chunk();
 
-    while (zip_fread(file, buffer, sizeof(buffer)) > 0)
-    {
+    while (zip_fread(file, buffer, sizeof(buffer)) > 0) {
       Message *message = process_message_header_chunk(buffer);
       zip_fread(file, message->text, (message->chunk_count - 1) * 128);
 
@@ -81,21 +72,15 @@ void QWK::readMessagesFile(zip *archive)
   }
 }
 
-void QWK::constructConferenceList()
-{
-}
+void QWK::constructConferenceList() {}
 
-unsigned int QWK::bytesToNumber(const char *buffer, unsigned int startIndex,
-                                unsigned int size)
-{
+unsigned int QWK::bytesToNumber(const char *buffer, unsigned int startIndex, unsigned int size) {
   char *b = new char[size]{};
   std::copy(&buffer[startIndex], &buffer[startIndex + size], b);
   return std::stoi(b);
 }
 
-char *QWK::bytesToString(const char *buffer, unsigned int startIndex,
-                         unsigned int size)
-{
+char *QWK::bytesToString(const char *buffer, unsigned int startIndex, unsigned int size) {
   char *b = new char[size]{};
   std::copy(&buffer[startIndex], &buffer[startIndex + size], b);
   return b;
@@ -103,8 +88,7 @@ char *QWK::bytesToString(const char *buffer, unsigned int startIndex,
 
 void QWK::process_file_header_chunk() {}
 
-Message *QWK::process_message_header_chunk(const char *chunk)
-{
+Message *QWK::process_message_header_chunk(const char *chunk) {
   Message *message = new Message;
   message->status = chunk[0];
   message->chunk_count = bytesToNumber(chunk, 116, 6);
@@ -113,7 +97,11 @@ Message *QWK::process_message_header_chunk(const char *chunk)
   message->in_reply_to = bytesToNumber(chunk, 108, 8);
   message->to_name = bytesToString(chunk, 21, 25);
   message->from_name = bytesToString(chunk, 46, 25);
-  message->conference = (chunk[123] << 8) | chunk[124];
+
+  uint8_t lsb = (uint8_t)chunk[123];
+  uint8_t msb = (uint8_t)chunk[124];
+
+  message->conference = lsb | (msb << 8);
   message->text = new char[(message->chunk_count - 1) * 128]{};
 
   return message;

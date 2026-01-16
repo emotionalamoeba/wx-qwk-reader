@@ -9,43 +9,34 @@
 #include "MessageTree.h"
 #include "QWK.h"
 
-class Frame1 : public wxFrame
-{
+class Frame1 : public wxFrame {
 public:
   Frame1()
       : wxFrame{
-            nullptr,
-            wxID_ANY,
-            "QWK Reader",
-            wxDefaultPosition,
-            wxSize(1280, 768),
-        }
-  {
+            nullptr, wxID_ANY, "QWK Reader", wxDefaultPosition, wxSize(1280, 768),
+        } {
     buildMenuBar();
     doLayout();
   }
 
 private:
-  void OnConferenceSelected( wxListEvent& event )
-{
+  void OnConferenceSelected(wxListEvent &event) {
     int item_index = event.GetIndex();
     if (item_index != -1) {
-        wxString item_text = conference_list->GetConferenceIdFromListId(item_index);        
-        std::cout << item_text << std::endl;
-        messageTree->populate_tree_for_conference(qwk, atoi(item_text));
-        
-        return;
+      wxString item_text = conference_list->GetConferenceIdFromListId(item_index);
+      std::cout << item_text << std::endl;
+      messageTree->populate_tree_for_conference(qwk, atoi(item_text));
+
+      return;
     }
 
     std::cout << "Could not select a conference" << std::endl;
-}
+  }
 
-  void doLayout()
-  {
+  void doLayout() {
 
     // Create a splitter window
-    wxSplitterWindow *splitter = new wxSplitterWindow(
-        this, -1, wxPoint(0, 0), wxSize(400, 400), wxSP_3D);
+    wxSplitterWindow *splitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(400, 400), wxSP_3D);
 
     // Create the left panel
     wxPanel *left_panel = new wxPanel(splitter, wxID_ANY);
@@ -62,8 +53,7 @@ private:
     splitter->SplitVertically(left_panel, right_panel);
 
     messageTree =
-        new MessageTree(left_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                        wxTL_MULTIPLE | wxBORDER_THEME);
+        new MessageTree(left_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_MULTIPLE | wxBORDER_THEME);
 
     left_sizer->Add(messageTree, 1, wxEXPAND | wxALL, 5);
 
@@ -72,14 +62,11 @@ private:
     conference_list->Show();
   }
 
-  void OnOpen(wxCommandEvent &event)
-  {
-    wxFileDialog *openFileDialog = new wxFileDialog(
-        this, _("Open QWK file"), "", "", "QWK files (*.qwk)|*.qwk",
-        wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+  void OnOpen(wxCommandEvent &event) {
+    wxFileDialog *openFileDialog =
+        new wxFileDialog(this, _("Open QWK file"), "", "", "QWK files (*.qwk)|*.qwk", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
-    if (openFileDialog->ShowModal() == wxID_OK)
-    {
+    if (openFileDialog->ShowModal() == wxID_OK) {
       wxString fileName = openFileDialog->GetPath();
       qwk = new QWK(fileName.mb_str());
       conference_list->setConferences(qwk->getConferenceList());
@@ -88,16 +75,13 @@ private:
 
   void OnQuit(wxCommandEvent &WXUNUSED(event)) { Close(true); }
 
-  void buildMenuBar()
-  {
+  void buildMenuBar() {
     auto menuFile = new wxMenu;
     auto menuItemFileOpen = menuFile->Append(wxID_OPEN);
-    menuItemFileOpen->SetBitmap(
-        wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_MENU));
+    menuItemFileOpen->SetBitmap(wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_MENU));
     menuFile->AppendSeparator();
     auto menuItemFileQuit = menuFile->Append(wxID_EXIT);
-    menuItemFileQuit->SetBitmap(
-        wxArtProvider::GetBitmap(wxART_QUIT, wxART_MENU));
+    menuItemFileQuit->SetBitmap(wxArtProvider::GetBitmap(wxART_QUIT, wxART_MENU));
 
     auto menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
@@ -107,11 +91,9 @@ private:
 
     SetMenuBar(mainMenu);
 
-    Connect(wxID_OPEN, wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(Frame1::OnOpen));
+    Connect(wxID_OPEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame1::OnOpen));
 
-    Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(Frame1::OnQuit));
+    Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame1::OnQuit));
   }
 
   QWK *qwk;
@@ -120,8 +102,7 @@ private:
   MessageTree *messageTree;
 };
 
-class Application : public wxApp
-{
+class Application : public wxApp {
   bool OnInit() override { return (new Frame1)->Show(); }
 };
 
