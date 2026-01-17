@@ -15,7 +15,7 @@ struct Message {
   char *date_str;
   unsigned int conference;
   unsigned int chunk_count;
-  char* text;
+  char *text;
 };
 
 struct Conference {
@@ -43,6 +43,7 @@ private:
   Message *process_message_header_chunk(const char *buffer);
   char *bytesToString(const char *buffer, unsigned int startIndex, unsigned int size);
   unsigned int bytesToNumber(const char *buffer, unsigned int startIndex, unsigned int size);
+  std::string trim_right(const std::string &str);
   void constructConferenceList();
 
   std::list<Conference *> conference_list = {};

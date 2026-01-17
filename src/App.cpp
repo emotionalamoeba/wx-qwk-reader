@@ -1,20 +1,24 @@
 #include <wx/artprov.h>
 #include <wx/filename.h>
+#include <wx/gdicmn.h>
 #include <wx/process.h>
 #include <wx/splitter.h>
 #include <wx/stdpaths.h>
+#include <wx/string.h>
 #include <wx/wx.h>
 
 #include "ConferenceList.h"
 #include "MessageTree.h"
 #include "QWK.h"
 
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+
 class Frame1 : public wxFrame {
 public:
   Frame1()
-      : wxFrame{
-            nullptr, wxID_ANY, "QWK Reader", wxDefaultPosition, wxSize(1280, 768),
-        } {
+      : wxFrame{nullptr, wxID_ANY, "QWK Reader", wxDefaultPosition, wxSize(1280, 768), wxDEFAULT_FRAME_STYLE, "MAIN"} {
+
     buildMenuBar();
     doLayout();
   }
@@ -25,7 +29,7 @@ private:
   ConferenceList *conference_list;
   MessageTree *messageTree;
   wxTextCtrl *messageText;
-  
+
   void OnConferenceSelected(wxListEvent &event) {
     int item_index = event.GetIndex();
     if (item_index != -1) {
@@ -48,18 +52,18 @@ private:
   void doLayout() {
 
     // Create a splitter window
-    wxSplitterWindow *splitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(400, 400), wxSP_3D);
+    wxSplitterWindow *splitter = new wxSplitterWindow(this, wxID_ANY, wxPoint(0, 0), wxSize(400, 400), wxSP_3D);
 
     // Create the left panel
     wxPanel *left_panel = new wxPanel(splitter, wxID_ANY);
     wxBoxSizer *left_sizer = new wxBoxSizer(wxVERTICAL);
-    // panel1Sizer->Add(textCtrl1, 1, wxEXPAND);
     left_panel->SetSizer(left_sizer);
 
     wxPanel *right_panel = new wxPanel(splitter, wxID_ANY);
 
     wxBoxSizer *right_sizer = new wxBoxSizer(wxVERTICAL);
-    messageText = new wxTextCtrl(right_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_MULTILINE );
+    messageText = new wxTextCtrl(right_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+                                 wxTE_READONLY | wxTE_MULTILINE);
     messageText->SetFont(wxFont(9, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
     right_sizer->Add(messageText, 1, wxEXPAND | wxALL, 5);
 
@@ -75,7 +79,7 @@ private:
 
     left_sizer->Add(messageTree, 1, wxEXPAND | wxALL, 5);
 
-    conference_list = new ConferenceList(this, "Conference List");
+    conference_list = new ConferenceList(this, "Conference List", wxPoint(0, 0), wxSize(200, 768));
     conference_list->Bind(wxEVT_LIST_ITEM_SELECTED, &Frame1::OnConferenceSelected, this);
     conference_list->Show();
   }
@@ -116,7 +120,13 @@ private:
 };
 
 class Application : public wxApp {
-  bool OnInit() override { return (new Frame1)->Show(); }
+  bool OnInit() override {
+    Frame1 *mainFrame = new Frame1();
+    if (!wxPersistenceManager::Get().RegisterAndRestore((wxFrame *)mainFrame))
+      return mainFrame->Show(true);
+    else
+      return mainFrame->Show(true);
+  }
 };
 
 wxIMPLEMENT_APP(Application);

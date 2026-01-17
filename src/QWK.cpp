@@ -40,7 +40,7 @@ int QWK::readControlFile(zip *archive) {
     std::vector<std::string> lines;
 
     while (std::getline(ss, line)) {
-      lines.push_back(line);
+      lines.push_back(trim_right(line));
     }
 
     for (unsigned int line_index = 11; line_index < lines.size() - 3; line_index += 2) {
@@ -65,7 +65,7 @@ void QWK::readMessagesFile(zip *archive) {
       Message *message = process_message_header_chunk(buffer);
       unsigned int text_length = (message->chunk_count - 1) * 128;
 
-      char* text = new char[text_length + 1]{};
+      char *text = new char[text_length + 1]{};
       zip_fread(file, text, text_length);
 
       for (int c = 0; c < text_length; c++) {
@@ -74,7 +74,7 @@ void QWK::readMessagesFile(zip *archive) {
         }
 
         // Turn control characters into space
-        if ((uint8_t)(text[c])>=1 && (uint8_t)(text[c])<32 && ((uint8_t)(text[c]) != 10)) {
+        if ((uint8_t)(text[c]) >= 1 && (uint8_t)(text[c]) < 32 && ((uint8_t)(text[c]) != 10)) {
           text[c] = 32;
         }
 
@@ -96,6 +96,11 @@ void QWK::readMessagesFile(zip *archive) {
 }
 
 void QWK::constructConferenceList() {}
+
+std::string QWK::trim_right(const std::string &str) {
+  size_t end = str.find_last_not_of(" \t\n\r");
+  return (end == std::string::npos) ? "" : str.substr(0, end + 1);
+}
 
 unsigned int QWK::bytesToNumber(const char *buffer, unsigned int startIndex, unsigned int size) {
   char *b = new char[size]{};

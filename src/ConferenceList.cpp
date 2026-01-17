@@ -6,7 +6,9 @@
 #include <wx/string.h>
 #include <wx/wx.h>
 
-ConferenceList::ConferenceList(wxWindow *parent, wxString title) : wxFrame(parent, wxID_ANY, title) {
+ConferenceList::ConferenceList(wxWindow *parent, wxString title, const wxPoint &pos = wxDefaultPosition,
+                               const wxSize &size = wxDefaultSize)
+    : wxFrame(parent, wxID_ANY, title, pos, size, wxDEFAULT_FRAME_STYLE, "CONFERENCE_LIST") {
   wxPanel *panel = new wxPanel(this);
   list_ctrl = new wxListCtrl(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL);
 
