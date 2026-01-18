@@ -44,7 +44,7 @@ private:
   char *bytesToString(const char *buffer, unsigned int startIndex, unsigned int size);
   unsigned int bytesToNumber(const char *buffer, unsigned int startIndex, unsigned int size);
   std::string trim_right(const std::string &str);
-  void constructConferenceList();
+  void constructConferenceStats();
 
   std::list<Conference *> conference_list = {};
   std::unordered_map<unsigned int, std::list<unsigned int>> conference_message_map = {};

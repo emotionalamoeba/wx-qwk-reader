@@ -18,7 +18,7 @@ QWK::QWK(const char *filename) {
   readControlFile(archive);
   readMessagesFile(archive);
 
-  constructConferenceList();
+  constructConferenceStats();
 }
 
 int QWK::readControlFile(zip *archive) {
@@ -95,7 +95,29 @@ void QWK::readMessagesFile(zip *archive) {
   }
 }
 
-void QWK::constructConferenceList() {}
+void QWK::constructConferenceStats() {
+  for (auto it = conference_list.begin(); it != conference_list.end(); ++it) {
+    Conference *conference = *it;
+
+    unsigned int conference_id = conference->id;
+
+    // iterate over conference messages
+    std::list<unsigned int> message_ids = conference_message_map[conference_id];
+
+    // count read and unread messages
+    for (auto messageIt = message_ids.begin(); messageIt != message_ids.end(); ++messageIt) {
+
+      // set values on conference object
+      Message *message = message_map[*messageIt];
+
+      if (message->status == ' ') {
+        conference->unread_message_count++;
+      }
+    }
+
+    conference->message_count = message_ids.size();
+  }
+}
 
 std::string QWK::trim_right(const std::string &str) {
   size_t end = str.find_last_not_of(" \t\n\r");
