@@ -52,7 +52,7 @@ private:
   void doLayout() {
 
     // Create a splitter window
-    wxSplitterWindow *splitter = new wxSplitterWindow(this, wxID_ANY, wxPoint(0, 0), wxSize(400, 400), wxSP_3D);
+    wxSplitterWindow *splitter = new wxSplitterWindow(this, wxID_ANY, wxPoint(0, 0), wxSize(1280, 400), wxSP_3D);
 
     // Create the left panel
     wxPanel *left_panel = new wxPanel(splitter, wxID_ANY);
@@ -67,7 +67,6 @@ private:
     messageText->SetFont(wxFont(9, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
     right_sizer->Add(messageText, 1, wxEXPAND | wxALL, 5);
 
-    // panel1Sizer->Add(textCtrl1, 1, wxEXPAND);
     right_panel->SetSizer(right_sizer);
 
     // Split the window vertically and set the left and right panes
@@ -82,6 +81,9 @@ private:
     conference_list = new ConferenceList(this, "Conference List", wxPoint(0, 0), wxSize(200, 768));
     conference_list->Bind(wxEVT_LIST_ITEM_SELECTED, &Frame1::OnConferenceSelected, this);
     conference_list->Show();
+
+    CreateStatusBar(3);
+    SetStatusText(wxT("Ready"), 0);
   }
 
   void OnOpen(wxCommandEvent &event) {
